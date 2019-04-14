@@ -1,6 +1,7 @@
 package Calendar;
 
-public class Employees {
+// TODO make this an iterator so i can use foreach loop
+public class EmployeeList {
 
 	int numberOfEmployees = 0;
 	Employee[] emps = new Employee[10];
@@ -45,5 +46,17 @@ public class Employees {
 		}
 		
 		return retString;
+	}
+	
+	public String toCsv(){
+		String rString = "";
+		
+		for (int x=0; x<numberOfEmployees; x++){
+			rString += emps[x].getCsvFormat();
+			rString += "\n";
+			System.out.println(rString);
+		}
+		System.out.println(rString);
+		return rString;
 	}
 }

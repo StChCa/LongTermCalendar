@@ -2,13 +2,13 @@ package Calendar;
 
 import java.util.*;
 
-public class Events {
+public class EventList {
 	int chunkSize = 5;
 	
 	Dictionary events = new Hashtable();
 	int[] emptys = new int[chunkSize];
 	
-	public Events() {
+	public EventList() {
 		for( int x = 0; x < chunkSize; x++) {
 			emptys[x] = 0;
 		}

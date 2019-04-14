@@ -3,13 +3,22 @@ package Calendar;
 public class Test {
 
 	public static void main(String[] args) {
-    	//testEmpStuff();
-    	testEventStuff();
+    	
+		SaveUtility.load();
+		
+		testIO();
+		testEmpStuff();
+    	//testEventStuff();
+	}
+	
+	public static void testIO(){
+		// point to the folder with the file that has the path to the data, or prompt user for that path
+		SaveUtility.hasSaveFile();
 	}
 	
 	// change chunk size in Events to 5 and run this code.
 	public static void testEventStuff() {
-		Events events = new Events();
+		EventList events = new EventList();
 		
 		Event a = new Event();
 		a.setTitle("This is a title");
@@ -39,7 +48,7 @@ public class Test {
 	
 	public static void testEmpStuff() {
     	
-		Employees emps = new Employees();
+		EmployeeList emps = new EmployeeList();
     	
     	Employee a1 = new Employee(1, "Stephen");
     	Employee a2 = new Employee(2, "b");
@@ -66,6 +75,8 @@ public class Test {
     	emps.add(a11);
     	
     	System.out.println(emps.toString());
+    	
+    	SaveUtility.saveEmployeeList(emps);
 	}
 
 }

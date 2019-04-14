@@ -26,6 +26,10 @@ public class Employee {
 		this.name = name;
 	}
 	
-	
+	public String getCsvFormat(){
+		String rString;
 
+		rString = String.format("%s,%s", Integer.toString(this.getId()),this.getName());
+		return rString;
+	}
 }
