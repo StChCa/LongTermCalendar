@@ -10,13 +10,13 @@ import java.util.*;
 public class CalendarProgram{
     static JLabel lblMonth, lblYear;
     static JButton btnPrev, btnNext;
-    static JTable tblCalendar;
+    static JTable table;
     static JComboBox cmbYear;
     static JFrame frmMain;
     static Container pane;
-    static DefaultTableModel mtblCalendar; //Table model
-    static JScrollPane stblCalendar; //The scrollpane
-    static JPanel pnlCalendar;
+    static DefaultTableModel tableModel; //Table model
+    static JScrollPane scrollPane; //The scrollpane
+    static JPanel calendarPanel;
     static int realYear, realMonth, realDay, currentYear, currentMonth, screenWidth, screenHeight, w, h, pad;
     
     public static void main (String args[]){
@@ -27,9 +27,8 @@ public class CalendarProgram{
     	screenHeight = (int)screenDimensions.getHeight();
     	
     	// set absolute width and height for screen. everything else is relative to these values
-    	w = 1000;
-    	h = 1000;
-    	pad = 30;
+    	w = 800;
+    	h = 800;
     	
         //Look and feel
         try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
@@ -39,8 +38,8 @@ public class CalendarProgram{
         catch (UnsupportedLookAndFeelException e) {}
         
         //Prepare frame
-        frmMain = new JFrame ("Gestionnaire de clients"); //Create frame
-        frmMain.setSize((int)(w*1.2), (int)(h*1.2));
+        frmMain = new JFrame("Connect IQ Calendar"); //Create frame
+        frmMain.setSize(w, h);
         pane = frmMain.getContentPane(); //Get content pane
         pane.setLayout(null); //Apply null layout
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close when X is clicked
@@ -50,13 +49,13 @@ public class CalendarProgram{
         cmbYear = new JComboBox();
         btnPrev = new JButton ("Prev Month");
         btnNext = new JButton ("Next Month");
-        mtblCalendar = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
-        tblCalendar = new JTable(mtblCalendar);
-        stblCalendar = new JScrollPane(tblCalendar);
-        pnlCalendar = new JPanel(null);
+        tableModel = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
+        table = new JTable(tableModel);
+        scrollPane = new JScrollPane(table);
+        calendarPanel = new JPanel(null);
         
         //Set border
-        pnlCalendar.setBorder(BorderFactory.createTitledBorder("Calendar"));
+        calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
         
         //Register action listeners
         btnPrev.addActionListener(new btnPrev_Action());
@@ -64,20 +63,22 @@ public class CalendarProgram{
         cmbYear.addActionListener(new cmbYear_Action());
         
         //Add controls to pane
-        pane.add(pnlCalendar);
+        pane.add(calendarPanel);
         pane.add(lblMonth);
         pane.add(cmbYear);
         pane.add(btnPrev);
         pane.add(btnNext);
-        pnlCalendar.add(stblCalendar);
+          calendarPanel.add(scrollPane);
         
         //Set bounds
-        pnlCalendar.setBounds((int)(.08*w), (int)(.08*h), w, h); // The location of the calendar panel
+        int cWidth = w/7;
+        int rHeight = h/6;
+        calendarPanel.setBounds(0, 0, w, h); // The location of the calendar panel
         lblMonth.setBounds((int)(w/2), 0, 130, 50);
         cmbYear.setBounds((int)(w/2) + 130, 0, 130, 50);
         btnPrev.setBounds(0, 0, 220, 50);
         btnNext.setBounds(w-150, 0, 220, 50);
-        stblCalendar.setBounds(0, 0, (int)(w*.92), (int)(h*.92));
+        scrollPane.setBounds(0, 0, (int)(w*.92), (int)(h*.92));
         
         //Make frame visible
         frmMain.setResizable(true);
@@ -94,24 +95,24 @@ public class CalendarProgram{
         //Add headers
         String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //All headers
         for (int i=0; i<7; i++){
-            mtblCalendar.addColumn(headers[i]);
+            tableModel.addColumn(headers[i]);
         }
         
-        tblCalendar.getParent().setBackground(tblCalendar.getBackground()); //Set background
+        table.getParent().setBackground(table.getBackground()); //Set background
         
         //No resize/reorder
-        tblCalendar.getTableHeader().setResizingAllowed(true);
-        tblCalendar.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(true);
+        table.getTableHeader().setReorderingAllowed(false);
         
         //Single cell selection
-        tblCalendar.setColumnSelectionAllowed(true);
-        tblCalendar.setRowSelectionAllowed(true);
-        tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setColumnSelectionAllowed(true);
+        table.setRowSelectionAllowed(true);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         //Set row/column count
-        tblCalendar.setRowHeight(h/7);
-        mtblCalendar.setColumnCount(7);
-        mtblCalendar.setRowCount(6);
+        table.setRowHeight(h/7);
+        tableModel.setColumnCount(7);
+        tableModel.setRowCount(6);
         
         //Populate table
         for (int i=realYear-100; i<=realYear+100; i++){
@@ -139,7 +140,7 @@ public class CalendarProgram{
         //Clear table
         for (int i=0; i<6; i++){
             for (int j=0; j<7; j++){
-                mtblCalendar.setValueAt(null, i, j);
+                tableModel.setValueAt(null, i, j);
             }
         }
         
@@ -152,14 +153,14 @@ public class CalendarProgram{
         for (int i=1; i<=nod; i++){
             int row = new Integer((i+som-2)/7);
             int column  =  (i+som-2)%7;
-            mtblCalendar.setValueAt(i, row, column);
+            tableModel.setValueAt(i, row, column);
         }
         
         //Apply renderers
-        tblCalendar.setDefaultRenderer(tblCalendar.getColumnClass(0), new tblCalendarRenderer());
+        table.setDefaultRenderer(table.getColumnClass(0), new tableRenderer());
     }
     
-    static class tblCalendarRenderer extends DefaultTableCellRenderer{
+    static class tableRenderer extends DefaultTableCellRenderer{
         public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
             super.getTableCellRendererComponent(table, value, selected, focused, row, column);
             if (column == 0 || column == 6){ //Week-end
